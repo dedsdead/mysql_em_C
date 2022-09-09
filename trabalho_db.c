@@ -5,7 +5,7 @@
  * Created on 04 de novembro de 2021
  * Banco de Dados programac
  * create table carro(placa varchar(7) not null, modelo varchar(45) not null, primary key(placa));
- * INSTRUÇÕES PARA Kubuntu ou Debian
+ * INSTRUÃ‡Ã•ES PARA Kubuntu ou Debian
   * instalar cliente mysql: apt-get install libmysqlclient-dev 
  * compilar com o seguinte comando: gcc main.c -lmysqlclient -o main
  */
@@ -156,56 +156,20 @@ void main(void){
 			}
 			
 		}
-		
-		
-		
-		//inserção na tabela
-		res = mysql_query(&conexao,"insert into carro(placa, modelo) values('AWX1313', 'Fusca');");
-		if (!res) printf("Registros inseridos %d\n", mysql_affected_rows(&conexao));
-		else printf("Erro na inserção %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
-		
-		
-		//seleção na tabela
-		if (mysql_query(&conexao,"select * from carro;"))
-	    	printf("Erro: %s\n",mysql_error(&conexao));
-		else {
- 			resp = mysql_store_result(&conexao);//recebe a consulta
- 			//se houver consulta
-			if (resp) {
-   				//passa os dados dos campos para a variável campos
-   				//escreve na tela os nomes dos campos dando
-   				//um tab somente
-   				campos = mysql_fetch_fields(resp);
-   				for (conta=0;conta<mysql_num_fields(resp);conta++) {
-      				printf("%s",(campos[conta]).name);
-      				if (mysql_num_fields(resp)>1)
-          				printf("\t");
-      			}
-            	printf("\n");  
-            	//enquanto retornar registros, conta até o
-		    	//número de colunas que a tabela tem e escreve na
-      			//tela com um tab, depois pula a linha e tenta
-      			//pegar outro registros
-      			while ((linhas=mysql_fetch_row(resp)) != NULL){
-         			for (conta=0;conta<mysql_num_fields(resp);conta++)
-            			printf("%s\t",linhas[conta]);
-         			printf("\n");
-      			}
-        	}
-  			mysql_free_result(resp);//limpa a variável do resultado: resp
-		}
 	
-		//Alterando um valor
+		
+		/*
+							!!!!!!!!!!!!!!!
+		
+		Alterando um valor                             
 		res=mysql_query(&conexao,"update carro set modelo='Pampa' where placa like 'AWX1313'");
-	    if (!res) printf("Registros alterados %d\n", mysql_affected_rows(&conexao));
-	    else printf("Erro na alteração %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));        		
-	
-	
-		//Excluindo um valor	
-		res=mysql_query(&conexao,"delete from carro where placa like 'AWX1313'");
-	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
-	    else printf("ERRO NA ESXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));        		
-	
+	    	if (!res) printf("Registros alterados %d\n", mysql_affected_rows(&conexao));
+	    	else printf("Erro na alteraÃ§Ã£o %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
+		
+							!!!!!!!!!!!!!!!
+		
+		*/
+		
 		mysql_close(&conexao);
 		
 	} else {
@@ -266,7 +230,7 @@ void main(void){
  			
 			if (resp) {
    				linhas=mysql_fetch_row(resp);
-   				//retorna a linha na posicao 0, que é o id
+   				//retorna a linha na posicao 0, que Ã© o id
    				return linhas[0];
         	}
   			mysql_free_result(resp);
@@ -282,7 +246,7 @@ void main(void){
  			resp = mysql_store_result(&conexao);//recebe a consulta
  			//se houver consulta
 			if (resp) {
-   				//passa os dados dos campos para a variável campos
+   				//passa os dados dos campos para a variÃ¡vel campos
    				//escreve na tela os nomes dos campos dando
    				//um tab somente
    				campos = mysql_fetch_fields(resp);
@@ -292,8 +256,8 @@ void main(void){
           				printf("\t");
       			}
             	printf("\n");  
-            	//enquanto retornar registros, conta até o
-		    	//número de colunas que a tabela tem e escreve na
+            	//enquanto retornar registros, conta atÃ© o
+		    	//nÃºmero de colunas que a tabela tem e escreve na
       			//tela com um tab, depois pula a linha e tenta
       			//pegar outro registros
       			while ((linhas=mysql_fetch_row(resp)) != NULL){
@@ -302,7 +266,7 @@ void main(void){
          			printf("\n");
       			}
         	}
-  			mysql_free_result(resp);//limpa a variável do resultado: resp
+  			mysql_free_result(resp);//limpa a variÃ¡vel do resultado: resp
 		}
 		
 	}
@@ -312,12 +276,8 @@ void main(void){
 		if (mysql_query(&conexao, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and a.nome like '%s';", nome))
 	    	printf("ERRO: %s\n",mysql_error(&conexao));
 		else {
- 			resp = mysql_store_result(&conexao);//recebe a consulta
- 			//se houver consulta
+ 			resp = mysql_store_result(&conexao);
 			if (resp) {
-   				//passa os dados dos campos para a variável campos
-   				//escreve na tela os nomes dos campos dando
-   				//um tab somente
    				campos = mysql_fetch_fields(resp);
    				for (conta=0;conta<mysql_num_fields(resp);conta++) {
       				printf("%s",(campos[conta]).name);
@@ -325,17 +285,13 @@ void main(void){
           				printf("\t");
       			}
             	printf("\n");  
-            	//enquanto retornar registros, conta até o
-		    	//número de colunas que a tabela tem e escreve na
-      			//tela com um tab, depois pula a linha e tenta
-      			//pegar outro registros
       			while ((linhas=mysql_fetch_row(resp)) != NULL){
          			for (conta=0;conta<mysql_num_fields(resp);conta++)
             			printf("%s\t",linhas[conta]);
          			printf("\n");
       			}
         	}
-  			mysql_free_result(resp);//limpa a variável do resultado: resp
+  			mysql_free_result(resp);
 		}
 		
 	}
@@ -345,12 +301,8 @@ void main(void){
 		if (mysql_query(&conexao, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and t.telefone=%d;", telefone))
 	    	printf("ERRO: %s\n",mysql_error(&conexao));
 		else {
- 			resp = mysql_store_result(&conexao);//recebe a consulta
- 			//se houver consulta
+ 			resp = mysql_store_result(&conexao);
 			if (resp) {
-   				//passa os dados dos campos para a variável campos
-   				//escreve na tela os nomes dos campos dando
-   				//um tab somente
    				campos = mysql_fetch_fields(resp);
    				for (conta=0;conta<mysql_num_fields(resp);conta++) {
       				printf("%s",(campos[conta]).name);
@@ -358,17 +310,13 @@ void main(void){
           				printf("\t");
       			}
             	printf("\n");  
-            	//enquanto retornar registros, conta até o
-		    	//número de colunas que a tabela tem e escreve na
-      			//tela com um tab, depois pula a linha e tenta
-      			//pegar outro registros
       			while ((linhas=mysql_fetch_row(resp)) != NULL){
          			for (conta=0;conta<mysql_num_fields(resp);conta++)
             			printf("%s\t",linhas[conta]);
          			printf("\n");
       			}
         	}
-  			mysql_free_result(resp);//limpa a variável do resultado: resp
+  			mysql_free_result(resp);
 		}
 		
 	}
@@ -378,12 +326,8 @@ void main(void){
 		if (mysql_query(&conexao, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and e.email like '%s';", email))
 	    	printf("ERRO: %s\n",mysql_error(&conexao));
 		else {
- 			resp = mysql_store_result(&conexao);//recebe a consulta
- 			//se houver consulta
+ 			resp = mysql_store_result(&conexao);
 			if (resp) {
-   				//passa os dados dos campos para a variável campos
-   				//escreve na tela os nomes dos campos dando
-   				//um tab somente
    				campos = mysql_fetch_fields(resp);
    				for (conta=0;conta<mysql_num_fields(resp);conta++) {
       				printf("%s",(campos[conta]).name);
@@ -391,17 +335,13 @@ void main(void){
           				printf("\t");
       			}
             	printf("\n");  
-            	//enquanto retornar registros, conta até o
-		    	//número de colunas que a tabela tem e escreve na
-      			//tela com um tab, depois pula a linha e tenta
-      			//pegar outro registros
       			while ((linhas=mysql_fetch_row(resp)) != NULL){
          			for (conta=0;conta<mysql_num_fields(resp);conta++)
             			printf("%s\t",linhas[conta]);
          			printf("\n");
       			}
         	}
-  			mysql_free_result(resp);//limpa a variável do resultado: resp
+  			mysql_free_result(resp);
 		}
 		
 	}
@@ -409,8 +349,8 @@ void main(void){
 	//excluir o contato pelo nome
 	void exclui_contato_nome (char[] nome){
 		res=mysql_query(&conexao,"delete from programac_agenda where nome like '%s'", nome);
-	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
-	    else printf("ERRO NA ESXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+	    if (!res) printf("SUCESSO NA EXCLUSÃƒO %d\n");
+	    else printf("ERRO NA EXCLUSÃƒO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
 		
 	}
 	 
