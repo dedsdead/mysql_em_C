@@ -28,6 +28,9 @@ void main(void){
 	char[] nome;
 	int telefone;
 	char[] email;
+
+	int novo;
+	char[] alterar;
 	
 	
 	mysql_init(&conexao);
@@ -36,6 +39,7 @@ void main(void){
 		
 		cria_tabelas();
 		
+		//MENU GERAL
 		while(opc != 0){
 			printf("ESCOLHA UMA OPCAO: \n");
 			printf("1: CADASTRAR\n");
@@ -47,6 +51,7 @@ void main(void){
 			
 			scanf(%i, &opc);
 			
+			//MENU DE CADASTRO
 			switch(opc){
 				case 1:
 					printf("ESCOLHA UMA OPCAO: \n");
@@ -96,6 +101,7 @@ void main(void){
 					
 				break;
 				
+				//MENU DE BUSCA
 				case 2:
 					printf("ESCOLHA UMA OPCAO: \n");
 					printf("1: BUSCAR POR CODIGO\n");
@@ -143,15 +149,102 @@ void main(void){
 					
 				break;
 				
+				//MENU DE ALTERAÇÃO
 				case 3:
+					printf("ESCOLHA UMA OPCAO: \n");
+					printf("1: ALTERAR CONTATO\n");
+					printf("2: ALTERAR TELEFONE\n");
+					printf("3: ALTERAR EMAIL\n");
+
+					printf("5: VOLTAR\n");
+
+					scanf(%i, &opc);
+
+					switch (opc){
+						case 1:
+							printf("DIGITE O NOME DO CONTATO A ALTERAR: \n");
+							
+							scanf(%s, alterar);
+
+							printf("DIGITE O NOVO NOME: \n");
+							
+							scanf(%s, nome);
+								
+							altera_contato_nome(alterar, nome);
+
+						break;
+
+						case 2:
+							printf("DIGITE O TELEFONE A ALTERAR: \n");
+							
+							scanf(%d, &telefone);
+
+							printf("DIGITE O NOVO TELEFONE: \n");
+							
+							scanf(%d, &novo);
+								
+							altera_telefone(novo, telefone);
+
+						break;
+
+						case 3:
+							printf("DIGITE O EMAIL A ALTERAR: \n");
+							
+							scanf(%s, email);
+
+							printf("DIGITE O NOVO EMAIL: \n");
+							
+							scanf(%s, alterar);
+								
+							altera_email(alterar, email);
+
+						break;
 					
+					}
+
 				break;
 				
+				//MENU DE EXCLUSÃO
 				case 4:
-					printf("DIGITE O NOME DO CONTATO A EXCLUIR: \n");
-							scanf(%s, nome);
+					printf("ESCOLHA UMA OPCAO: \n");
+					printf("1: DELETAR CONTATO\n");
+					printf("2: DELETAR TELEFONE\n");
+					printf("3: DELETAR EMAIL\n");
+
+					printf("5: VOLTAR\n");
+
+					scanf(%i, &opc);
+
+					switch (opc){
+						case 1:
+							printf("DIGITE O NOME DO CONTATO A EXCLUIR: \n");
 							
+							scanf(%s, nome);
+								
 							exclui_contato_nome(nome);
+
+						break;
+
+						case 2:
+							printf("DIGITE O TELEFONE A EXCLUIR: \n");
+							
+							scanf(%d, &telefone);
+								
+							exclui_telefone(telefone);
+
+						break;
+
+						case 3:
+							printf("DIGITE O EMAIL A EXCLUIR: \n");
+							
+							scanf(%s, email);
+								
+							exclui_email(email);
+
+						break;
+					
+					}
+					
 				break;
 			}
 			
@@ -190,6 +283,7 @@ void main(void){
 			codigo int not null,
 			primary key(telefone),
 			foreign key(codigo) references programac_agenda(codigo)
+			on delete cascade
 		);
 		
 		create table programac_email(
@@ -197,6 +291,7 @@ void main(void){
 			codigo int not null,
 			primary key(email),
 			foreign key(codigo) references programac_agenda(codigo)
+			on delete cascade
 		);
 	}
 	
@@ -209,14 +304,14 @@ void main(void){
 	
 	//adiciona um telefone ao contato informado
 	void adiciona_telefone(int id, int telefone){
-		res = mysql_query(&conexao,"insert into programac_telefone values (telefone, id);");
+		res = mysql_query(&conexao,"insert into programac_telefone values (telefone, %d);", codigo);
 		if (!res) printf("TELEFONE ADICIONADO COM SUCESSO %d\n");
 		else printf("ERRO AO CRIAR CONTATO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 	}
 	
 	//adiciona um email ao contato informado
-	void adiciona_email(int id, char[] email){
-		res = mysql_query(&conexao,"insert into programac_telefone values (email, id);");
+	vo%d ad, codigoiciona_email(int id, char[] email){
+		res = mysql_query(&conexao,"insert into programac_telefone values (email, %d);", codigo);
 		if (!res) printf("EMAIL ADICIONADO COM SUCESSO %d\n");
 		else printf("ERRO AO CRIAR CONTATO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 	}
@@ -349,6 +444,46 @@ void main(void){
 	//excluir o contato pelo nome
 	void exclui_contato_nome (char[] nome){
 		res=mysql_query(&conexao,"delete from programac_agenda where nome like '%s'", nome);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+
+	//excluir o telefone
+	void exclui_telefone (int telefone){
+		res=mysql_query(&conexao,"delete from programac_telefone where telefone=%d", telefone);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+
+	//excluir o email
+	void exclui_email (char[] email){
+		res=mysql_query(&conexao,"delete from programac_email where email like '%s'", email);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+
+	//alterar o contato pelo nome
+	void altera_contato_nome (char[] alterar, char[] nome){
+		res=mysql_query(&conexao,"update programac_agenda set nome='%s' where nome like '%s'", alterar, nome);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+
+	//alterar o telefone
+	void altera_telefone (int novo, int telefone){
+		res=mysql_query(&conexao,"delete from programac_telefone set telefone=%d where telefone=%d", alterar, telefone);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+
+	//alterar o email
+	void altera_email (char[] alterar, char[] email){
+		res=mysql_query(&conexao,"delete from programac_email set email='%s' where email like '%s'", alterar, email);
 	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
 	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
 		
