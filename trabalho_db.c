@@ -29,8 +29,10 @@ void main(void){
 	int telefone;
 	char[] email;
 
-	int novo;
-	char[] alterar;
+	int novo; //ALTERAR INT
+	char[] alterar; //ALTERAR STRING
+
+	char[255] query;
 	
 	
 	mysql_init(&conexao);
@@ -297,28 +299,36 @@ void main(void){
 	
 	//cria um contato
 	void cria_contato(char[] nome){
-		res = mysql_query(&conexao,"insert into programac_agenda values (nome);");
+		sprintf(query, "insert into programac_agenda values ('%s');", nome);
+
+		res = mysql_query(&conexao, query);
 		if (!res) printf("CONTATO CRIADO COM SUCESSO %d\n");
 		else printf("ERRO AO CRIAR CONTATO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 	}
 	
 	//adiciona um telefone ao contato informado
 	void adiciona_telefone(int id, int telefone){
-		res = mysql_query(&conexao,"insert into programac_telefone values (telefone, %d);", codigo);
+		sprintf(query, "insert into programac_telefone values (%d, %d);", telefone, id);
+
+		res = mysql_query(&conexao, query);
 		if (!res) printf("TELEFONE ADICIONADO COM SUCESSO %d\n");
 		else printf("ERRO AO CRIAR CONTATO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 	}
 	
 	//adiciona um email ao contato informado
 	vo%d ad, codigoiciona_email(int id, char[] email){
-		res = mysql_query(&conexao,"insert into programac_telefone values (email, %d);", codigo);
+		sprintf(query, "insert into programac_email values ('%s', %d);", email, id);
+
+		res = mysql_query(&conexao, query);
 		if (!res) printf("EMAIL ADICIONADO COM SUCESSO %d\n");
 		else printf("ERRO AO CRIAR CONTATO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 	}
 	
 	//busca o contato pelo nome e retorna o id
 	int retorna_contato_id(char[] nome){
-		if (mysql_query(&conexao,"select codigo from programac_agenda where nome like '%s';", nome))
+		sprintf(query, "select codigo from programac_agenda where nome like ('%s');", nome);
+
+		if (mysql_query(&conexao, query))
 	    	printf("ERRO: %s\n",mysql_error(&conexao));
 		else {
  			resp = mysql_store_result(&conexao);
@@ -335,7 +345,9 @@ void main(void){
 	
 	//busca o contato pelo codigo e imprime na tela
 	void busca_contato_codigo(int codigo){
-		if (mysql_query(&conexao, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and a.codigo=%d;", codigo))
+		sprintf(query, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and a.codigo=%d;", codigo);
+
+		if (mysql_query(&conexao, query))
 	    	printf("Erro: %s\n",mysql_error(&conexao));
 		else {
  			resp = mysql_store_result(&conexao);//recebe a consulta
@@ -368,7 +380,9 @@ void main(void){
 	
 	//busca o contato pelo nome e imprime na tela
 	void busca_contato_nome(char[] nome){
-		if (mysql_query(&conexao, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and a.nome like '%s';", nome))
+		sprintf(query, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and a.nome like ('%s');", nome);
+
+		if (mysql_query(&conexao, query))
 	    	printf("ERRO: %s\n",mysql_error(&conexao));
 		else {
  			resp = mysql_store_result(&conexao);
@@ -393,7 +407,9 @@ void main(void){
 	
 	//busca o contato pelo telefone e imprime na tela
 	void busca_contato_telefone(int telefone){
-		if (mysql_query(&conexao, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and t.telefone=%d;", telefone))
+		sprintf(query, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and t.telefone=%d;", telefone);
+
+		if (mysql_query(&conexao, query))
 	    	printf("ERRO: %s\n",mysql_error(&conexao));
 		else {
  			resp = mysql_store_result(&conexao);
@@ -418,7 +434,9 @@ void main(void){
 	
 	//busca o contato pelo email e imprime na tela
 	void busca_contato_email(char[] email){
-		if (mysql_query(&conexao, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and e.email like '%s';", email))
+		sprintf(query, "select * from programac_agenda a inner join programac_telefone t inner join programac_email e on a.codigo=t.codigo and a.codigo=e.codigo and e.email like ('%s');", email);
+
+		if (mysql_query(&conexao, query))
 	    	printf("ERRO: %s\n",mysql_error(&conexao));
 		else {
  			resp = mysql_store_result(&conexao);
@@ -440,34 +458,12 @@ void main(void){
 		}
 		
 	}
-	
-	//excluir o contato pelo nome
-	void exclui_contato_nome (char[] nome){
-		res=mysql_query(&conexao,"delete from programac_agenda where nome like '%s'", nome);
-	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
-	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
-		
-	}
-
-	//excluir o telefone
-	void exclui_telefone (int telefone){
-		res=mysql_query(&conexao,"delete from programac_telefone where telefone=%d", telefone);
-	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
-	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
-		
-	}
-
-	//excluir o email
-	void exclui_email (char[] email){
-		res=mysql_query(&conexao,"delete from programac_email where email like '%s'", email);
-	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
-	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
-		
-	}
 
 	//alterar o contato pelo nome
 	void altera_contato_nome (char[] alterar, char[] nome){
-		res=mysql_query(&conexao,"update programac_agenda set nome='%s' where nome like '%s'", alterar, nome);
+		sprintf(query, "update programac_agenda set nome=('%s') where nome like ('%s')", alterar, nome);
+
+		res=mysql_query(&conexao, query);
 	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
 	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
 		
@@ -475,7 +471,9 @@ void main(void){
 
 	//alterar o telefone
 	void altera_telefone (int novo, int telefone){
-		res=mysql_query(&conexao,"delete from programac_telefone set telefone=%d where telefone=%d", alterar, telefone);
+		sprintf(query, "delete from programac_telefone set telefone=%d where telefone=%d", alterar, telefone);
+
+		res=mysql_query(&conexao, query);
 	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
 	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
 		
@@ -483,7 +481,39 @@ void main(void){
 
 	//alterar o email
 	void altera_email (char[] alterar, char[] email){
-		res=mysql_query(&conexao,"delete from programac_email set email='%s' where email like '%s'", alterar, email);
+		sprintf(query, "delete from programac_email set email=('%s') where email like ('%s')", alterar, email);
+
+		res=mysql_query(&conexao, query);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+	
+	//excluir o contato pelo nome
+	void exclui_contato_nome (char[] nome){
+		sprintf(query, "delete from programac_agenda where nome like ('%s')", nome);
+
+		res=mysql_query(&conexao, query);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+
+	//excluir o telefone
+	void exclui_telefone (int telefone){
+		sprintf(query, "delete from programac_telefone where telefone=%d", telefone);
+
+		res=mysql_query(&conexao, query);
+	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
+	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
+		
+	}
+
+	//excluir o email
+	void exclui_email (char[] email){
+		sprintf(query, "delete from programac_email where email like ('%s')", email);
+
+		res=mysql_query(&conexao, query);
 	    if (!res) printf("SUCESSO NA EXCLUSÃO %d\n");
 	    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));     
 		
