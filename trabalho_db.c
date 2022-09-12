@@ -24,21 +24,21 @@ MYSQL conexao;
 
 void cria_tabelas(void){
     //cria tabela agenda
-    res = mysql_query(&conexao, "create table programac_agenda(codigo int not null AUTO_INCREMENT,nome varchar(45) not null,primary key(codigo));");
+    res = mysql_query(&conexao, "create table if not exists programac_agenda(codigo int not null AUTO_INCREMENT,nome varchar(45) not null,primary key(codigo));");
 
-    if (!res) printf("TABELA CRIADA COM SUCESSO\n");
+    if (!res) printf("TABELA CRIADA (OU JA EXISTENTE)\n");
     else printf("ERRO AO CRIAR TABELA %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
     //cria tabela telefone
-    res = mysql_query(&conexao, "create table programac_telefone(telefone int not null,codigo int not null,primary key(telefone),foreign key(codigo) references programac_agenda(codigo) on delete cascade);");
+    res = mysql_query(&conexao, "create table if not exists programac_telefone(telefone int not null,codigo int not null,primary key(telefone),foreign key(codigo) references programac_agenda(codigo) on delete cascade);");
 
-    if (!res) printf("TABELA CRIADA COM SUCESSO\n");
+    if (!res) printf("TABELA CRIADA (OU JA EXISTENTE)\n");
     else printf("ERRO AO CRIAR TABELA %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
     //cria tabela email
-    res = mysql_query(&conexao, "create table programac_email(email varchar(100) not null,codigo int not null,primary key(email),foreign key(codigo) references programac_agenda(codigo) on delete cascade);");
+    res = mysql_query(&conexao, "create table if not exists programac_email(email varchar(100) not null,codigo int not null,primary key(email),foreign key(codigo) references programac_agenda(codigo) on delete cascade);");
 
-    if (!res) printf("TABELA CRIADA COM SUCESSO\n");
+    if (!res) printf("TABELA CRIADA (OU JA EXISTENTE)\n");
     else printf("ERRO AO CRIAR TABELA %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 }
 
@@ -80,11 +80,17 @@ int retorna_contato_id(char nome[45]){
         if (resp) {
 			linhas=mysql_fetch_row(resp);
 
-			//retorna a linha na posicao 0, que é o codigo
-			//converte de ponteiro de char para inteiro
-			int codigo = atoi(linhas[0]);
+			//se não encontrou o contato retorna -1 (erro)
+			if(linhas == NULL) return -1;
 
-			return codigo;
+			//se encontrou o contato
+			else{
+				//retorna a linha na posicao 0, que é o codigo
+				//converte de ponteiro de char para inteiro
+				int codigo = atoi(linhas[0]);
+
+				return codigo;
+			}
 
         }
         mysql_free_result(resp);
@@ -215,8 +221,15 @@ void altera_contato_nome (char alterar[100], char nome[45]){
     sprintf(query, "update programac_agenda set nome=('%s') where nome like ('%s')", alterar, nome);
 
     res=mysql_query(&conexao, query);
-    if (!res) printf("SUCESSO NA ALTERAÇÃO\n");
-    else printf("ERRO NA ALTERAÇÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
+
+	if (!res){
+		//se modificou alguma linha na tabela
+		if(mysql_affected_rows(&conexao) > 0){
+			printf("SUCESSO NA ALTERAÇÃO\n");
+
+		} else printf("ERRO DADOS INVALIDOS\n");
+
+	} else printf("ERRO NA ALTERAÇÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
 }
 
@@ -225,8 +238,15 @@ void altera_telefone (int novo, int telefone){
     sprintf(query, "update programac_telefone set telefone=%d where telefone=%d", novo, telefone);
 
     res=mysql_query(&conexao, query);
-    if (!res) printf("SUCESSO NA ALTERAÇÃO\n");
-    else printf("ERRO NA ALTERAÇÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
+
+	if (!res){
+		//se modificou alguma linha na tabela
+		if(mysql_affected_rows(&conexao) > 0){
+			printf("SUCESSO NA ALTERAÇÃO\n");
+
+		} else printf("ERRO DADOS INVALIDOS\n");
+
+	} else printf("ERRO NA ALTERAÇÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
 }
 
@@ -235,8 +255,15 @@ void altera_email (char alterar[100], char email[100]){
     sprintf(query, "update programac_email set email=('%s') where email like ('%s')", alterar, email);
 
     res=mysql_query(&conexao, query);
-    if (!res) printf("SUCESSO NA ALTERAÇÃO\n");
-    else printf("ERRO NA ALTERAÇÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
+
+	if (!res){
+		//se modificou alguma linha na tabela
+		if(mysql_affected_rows(&conexao) > 0){
+			printf("SUCESSO NA ALTERAÇÃO\n");
+
+		} else printf("ERRO DADOS INVALIDOS\n");
+
+	} else printf("ERRO NA ALTERAÇÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
 }
 
@@ -245,8 +272,15 @@ void exclui_contato_nome (char nome[45]){
     sprintf(query, "delete from programac_agenda where nome like ('%s')", nome);
 
     res=mysql_query(&conexao, query);
-    if (!res) printf("SUCESSO NA EXCLUSÃO\n");
-    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
+
+	if (!res){
+		//se modificou alguma linha na tabela
+		if(mysql_affected_rows(&conexao) > 0){
+			printf("SUCESSO NA EXCLUSÃO\n");
+
+		} else printf("ERRO DADOS INVALIDOS\n");
+
+	} else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
 }
 
@@ -255,8 +289,15 @@ void exclui_telefone (int telefone){
     sprintf(query, "delete from programac_telefone where telefone=%d", telefone);
 
     res=mysql_query(&conexao, query);
-    if (!res) printf("SUCESSO NA EXCLUSÃO\n");
-    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
+
+	if (!res){
+		//se modificou alguma linha na tabela
+		if(mysql_affected_rows(&conexao) > 0){
+			printf("SUCESSO NA EXCLUSÃO\n");
+
+		} else printf("ERRO DADOS INVALIDOS\n");
+
+	} else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
 }
 
@@ -265,8 +306,15 @@ void exclui_email (char email[100]){
     sprintf(query, "delete from programac_email where email like ('%s')", email);
 
     res=mysql_query(&conexao, query);
-    if (!res) printf("SUCESSO NA EXCLUSÃO\n");
-    else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
+
+	if (!res){
+		//se modificou alguma linha na tabela
+		if(mysql_affected_rows(&conexao) > 0){
+			printf("SUCESSO NA EXCLUSÃO\n");
+
+		} else printf("ERRO DADOS INVALIDOS\n");
+
+	} else printf("ERRO NA EXCLUSÃO %d : %s\n", mysql_errno(&conexao), mysql_error(&conexao));
 
 }
 
@@ -317,7 +365,13 @@ void main(void){
 							printf("DIGITE O NOME DO CONTATO: \n");
 							scanf("%s", nome);
 
-							cria_contato(nome);
+							if(retorna_contato_id(nome) == -1){
+								cria_contato(nome);
+
+							} else {
+								printf("JA EXISTE UM CONTATO COM ESTE NOME! \n");
+
+							}
 
 
 						break;
@@ -328,10 +382,16 @@ void main(void){
 
 							codigo = retorna_contato_id(nome);
 
-							printf("DIGITE O NUMERO DE TELEFONE: \n");
-							scanf("%d", &telefone);
+							if(codigo != -1){
+								printf("DIGITE O NUMERO DE TELEFONE: \n");
+								scanf("%d", &telefone);
 
-							adiciona_telefone(codigo, telefone);
+								adiciona_telefone(codigo, telefone);
+
+							} else {
+								printf("CONTATO INVALIDO! \n");
+
+							}
 
 
 
@@ -343,10 +403,16 @@ void main(void){
 
 							codigo = retorna_contato_id(nome);
 
-							printf("DIGITE O EMAIL: \n");
-							scanf("%s", email);
+							if(codigo != -1){
+								printf("DIGITE O EMAIL: \n");
+								scanf("%s", email);
 
-							adiciona_email(codigo, email);
+								adiciona_email(codigo, email);
+
+							} else {
+								printf("CONTATO INVALIDO! \n");
+
+							}
 
 						break;
 					}
@@ -430,7 +496,6 @@ void main(void){
 							printf("DIGITE O TELEFONE A ALTERAR: \n");
 
 							scanf("%d", &telefone);
-
 
 							printf("DIGITE O NOVO TELEFONE: \n");
 
